@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NXT Portal | Sign in</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="login-page">
+    <main class="login-card" aria-labelledby="login-title">
+      <p class="eyebrow">NXT DEMO PORTAL</p>
+      <h1 id="login-title">Welcome back</h1>
+      <p class="subtitle">Sign in to continue to your dashboard.</p>
+
+      <form id="login-form" novalidate>
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" autocomplete="username" placeholder="Enter your username" required />
+
+        <label for="password">Password</label>
+        <div class="password-wrap">
+          <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
+          <button class="show-password" id="show-password" type="button" aria-label="Show password">Show</button>
+        </div>
+
+        <p id="error-message" class="error-message" role="alert" aria-live="polite"></p>
+        <button class="sign-in" type="submit">Sign In <span aria-hidden="true">→</span></button>
+      </form>
+
+      <p class="demo-note">Demo project — only fictional local accounts are accepted.</p>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>
