@@ -10,27 +10,37 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="login-page">
-    <main class="login-card" aria-labelledby="login-title">
-      <p class="eyebrow">LCPS GO</p>
-      <h1 id="login-title">LCPS GO</h1>
-      <p class="subtitle">Sign in to continue to your dashboard.</p>
+    <div class="login-shell">
+      <div class="brand-mark" aria-label="LCPS GO">LCPS GO</div>
+      <main class="login-card" aria-labelledby="login-title">
+        <h1 id="login-title">Login to LCPS GO</h1>
 
-      <form id="login-form" novalidate>
-        <label for="username">Username</label>
-        <input id="username" name="username" type="text" autocomplete="username" placeholder="Enter your username" required />
+        <form id="login-form" novalidate>
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" autocomplete="username" placeholder="Enter your username" required />
 
-        <label for="password">Password</label>
-        <div class="password-wrap">
-          <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
-          <button class="show-password" id="show-password" type="button" aria-label="Show password">Show</button>
-        </div>
+          <label for="password">Password</label>
+          <div class="password-wrap">
+            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
+            <button class="show-password" id="show-password" type="button" aria-label="Show password">Show</button>
+          </div>
 
-        <p id="error-message" class="error-message" role="alert" aria-live="polite"></p>
-        <button class="sign-in" type="submit">Sign In <span aria-hidden="true">→</span></button>
-      </form>
+          <p id="error-message" class="error-message" role="alert" aria-live="polite"></p>
+          <button class="sign-in" type="submit">Sign In</button>
+          <button class="microsoft-login" type="button">Microsoft Login</button>
+        </form>
 
-      <p class="demo-note">Demo project — only fictional local accounts are accepted.</p>
-    </main>
+        <div class="divider"><span>Or sign in using:</span></div>
+        <button class="quick-card" type="button" aria-label="Quick card sign in">Quick Card</button>
+      </main>
+
+      <footer class="login-footer">
+        <a href="#">Not Your Page?</a>
+        <a href="#">Help</a>
+        <a href="#">Browser Check</a>
+        <a href="#">Privacy</a>
+      </footer>
+    </div>
     <script src="script.js"></script>
   </body>
 </html>

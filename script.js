@@ -8,6 +8,13 @@ const username = document.querySelector("#username");
 const password = document.querySelector("#password");
 const errorMessage = document.querySelector("#error-message");
 const showPassword = document.querySelector("#show-password");
+const panicButton = document.querySelector(".panic-button");
+
+if (panicButton) {
+  panicButton.addEventListener("click", () => {
+    window.open("https://login.classlink.com/my/loudoun", "_blank", "noopener,noreferrer");
+  });
+}
 
 showPassword.addEventListener("click", () => {
   const showing = password.type === "text";

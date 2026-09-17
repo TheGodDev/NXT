@@ -10,7 +10,19 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="dashboard" data-role="user">
-    <header class="topbar"><div class="brand">NXT</div><button class="logout" type="button">Sign out</button></header>
+    <header class="topbar">
+      <div class="brand">NXT</div>
+      <div class="topbar-actions">
+        <button class="panic-button" type="button">PANIC</button>
+        <button class="logout" type="button">Sign out</button>
+      </div>
+    </header>
+    <main class="launch-page">
+      <div class="launch-actions">
+        <button class="launch-button primary" type="button">Launch NXT Proxy</button>
+        <button class="launch-button" type="button">Launch NXT OS</button>
+      </div>
+    </main>
     <script src="dashboard.js"></script>
   </body>
 </html>
