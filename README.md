@@ -25,3 +25,7 @@ If you would like to help test or contribute to the development of NXT Proxy, fe
 
 ## 📄 License
 MIT
+
+##**Routing**
+
+Click privacy and it works voila***!***
