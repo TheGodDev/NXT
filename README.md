@@ -1,4 +1,7 @@
 **NXT Proxy**
-Collaborators 
+
+Collaborators
+
 ***TheGodDev***
+
 ***TheDaBrain***
