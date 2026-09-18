@@ -1,6 +1,6 @@
 # NXT Proxy
 
-Welcome to **NXT Proxy**, a powerful proxy solution currently in its **Up & Beta Testing** phase. We are actively refining features, optimizing performance, and ensuring stability.
+Welcome to **NXT Proxy**, a powerful proxy solution currently in its **Scripting & Beta Testing** phase. We are actively refining features, optimizing performance, and ensuring stability.
 
 ## 👥 Collaborators
 This project is proudly developed and maintained by:
