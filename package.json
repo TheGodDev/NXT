@@ -13,5 +13,8 @@
     "dev": "node server.js",
     "install:app": "npm --prefix ./scramjet install",
     "start:app": "node server.js"
+  },
+  "dependencies": {
+    "firebase": "^12.19.0"
   }
 }
