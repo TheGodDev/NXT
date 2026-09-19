@@ -9,10 +9,10 @@
   },
   "scripts": {
     "postinstall": "npm --prefix ./scramjet install",
-    "start": "node server.js",
-    "dev": "node server.js",
+    "start": "node scramjet/src/index.js",
+    "dev": "node scramjet/src/index.js",
     "install:app": "npm --prefix ./scramjet install",
-    "start:app": "node server.js"
+    "start:app": "node scramjet/src/index.js"
   },
   "dependencies": {
     "firebase": "^12.19.0"

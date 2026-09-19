@@ -61,6 +61,63 @@ fastify.register(fastifyStatic, {
 	decorateReply: false,
 });
 
+// ── In-Memory Telemetry Engine for Admin Live Monitor ───────────────────────
+const activeSessions = new Map();
+const activityLogs = [
+	{
+		id: "sys-0",
+		type: "SYSTEM",
+		user: "NXT Core",
+		action: "Telemetry Engine Online",
+		detail: "Monitoring active connections & proxy traffic",
+		timestamp: new Date().toLocaleTimeString()
+	}
+];
+
+fastify.post("/api/telemetry/heartbeat", async (request, reply) => {
+	const body = request.body || {};
+	const sessionId = body.sessionId || request.ip;
+	if (sessionId) {
+		activeSessions.set(sessionId, {
+			sessionId,
+			user: body.user || "Anonymous User",
+			page: body.page || "portal",
+			lastSeen: Date.now(),
+			ip: request.ip || "127.0.0.1"
+		});
+	}
+	return reply.send({ success: true });
+});
+
+fastify.post("/api/telemetry/event", async (request, reply) => {
+	const body = request.body || {};
+	const logEntry = {
+		id: Math.random().toString(36).substring(2, 9),
+		type: body.type || "SEARCH",
+		user: body.user || "User",
+		action: body.action || "Proxy Search",
+		detail: body.detail || "",
+		timestamp: new Date().toLocaleTimeString()
+	};
+	activityLogs.unshift(logEntry);
+	if (activityLogs.length > 100) activityLogs.pop();
+	return reply.send({ success: true, logEntry });
+});
+
+fastify.get("/api/telemetry/stats", async (_request, reply) => {
+	const now = Date.now();
+	for (const [id, session] of activeSessions.entries()) {
+		if (now - session.lastSeen > 12000) {
+			activeSessions.delete(id);
+		}
+	}
+	return reply.send({
+		onlineCount: activeSessions.size,
+		sessions: Array.from(activeSessions.values()),
+		recentLogs: activityLogs.slice(0, 30)
+	});
+});
+
 fastify.get("/sw.js", async (_request, reply) => {
 	return reply.sendFile("sw.js", scramjetPublicPath);
 });
