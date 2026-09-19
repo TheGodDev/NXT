@@ -1,13 +1,25 @@
+/* ── Design tokens ───────────────────────────────────────────────────────── */
 :root {
+  --nxt-green:       #22c55e;
+  --nxt-green-dark:  #16a34a;
+  --nxt-green-glow:  rgba(34, 197, 94, 0.35);
+  --nxt-bg:          #020403;
+  --nxt-card-bg:     rgba(8, 18, 10, 0.72);
+  --nxt-border:      rgba(34, 197, 94, 0.22);
+  --nxt-text:        #e4ffe9;
+  --nxt-muted:       rgba(228, 255, 233, 0.45);
+  --nxt-danger:      #f87171;
+  /* legacy tokens kept for dashboard styles below */
   --navy: #14245c;
   --blue: #1460ed;
   --cyan: #08a8d8;
-  --ink: #18223a;
-  --muted: #64718b;
+  --ink:  #18223a;
+  --muted:#64718b;
   --danger: #c72b47;
 }
 
-* { box-sizing: border-box; }
+/* ── Reset ───────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -15,136 +27,242 @@ body {
   color: var(--ink);
 }
 
-.login-page {
+/* ── Login page shell ────────────────────────────────────────────────────── */
+.nxt-login-page {
   position: relative;
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 28px 20px 18px;
-  background: #4aa4d6;
+  padding: 32px 20px 24px;
+  background: var(--nxt-bg);
+  overflow: hidden;
+  color: var(--nxt-text);
 }
 
-.login-shell {
-  width: min(100%, 440px);
+/* animated canvas sits behind everything */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.nxt-login-shell {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 420px);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.brand-mark {
-  margin-bottom: 14px;
-  color: #ffffff;
-  font-size: 1.1rem;
+/* ── Wordmark ────────────────────────────────────────────────────────────── */
+.nxt-wordmark {
+  font-size: clamp(3rem, 10vw, 4.4rem);
   font-weight: 900;
-  letter-spacing: .14em;
+  letter-spacing: .18em;
+  line-height: 1;
+  margin-bottom: 6px;
+  user-select: none;
+}
+.nxt-wordmark-n { color: var(--nxt-green); }
+.nxt-wordmark-x {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--nxt-green);
+  filter: drop-shadow(0 0 10px var(--nxt-green));
+}
+.nxt-wordmark-t { color: var(--nxt-green); opacity: 0.75; }
+
+.nxt-tagline {
+  margin: 0 0 26px;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .16em;
   text-transform: uppercase;
+  color: var(--nxt-muted);
 }
 
-.login-card {
-  width: min(100%, 440px);
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
+/* ── Card ────────────────────────────────────────────────────────────────── */
+.nxt-card {
+  width: 100%;
+  padding: 36px 32px 28px;
+  border: 1px solid var(--nxt-border);
+  border-radius: 18px;
+  background: var(--nxt-card-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 0 0 1px rgba(34,197,94,0.07),
+    0 8px 40px rgba(0,0,0,0.55),
+    0 0 60px rgba(34,197,94,0.06);
 }
 
-h1 {
-  margin: 0 0 22px;
-  color: #1d2433;
-  font-size: clamp(1.8rem, 4vw, 2.1rem);
-  line-height: 1.2;
-  text-align: center;
+.nxt-card h1 {
+  margin: 0 0 26px;
+  font-size: clamp(1.5rem, 4vw, 1.85rem);
   font-weight: 800;
+  text-align: center;
+  color: var(--nxt-text);
+  letter-spacing: .02em;
 }
 
-label { display: block; margin: 0 0 8px; color: #2b3a4e; font-weight: 800; font-size: .95rem; }
+/* ── Fields ──────────────────────────────────────────────────────────────── */
+.nxt-field {
+  margin-bottom: 18px;
+}
+
+.nxt-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: .82rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--nxt-muted);
+}
+
+.nxt-field input,
 input {
   width: 100%;
-  height: 46px;
+  height: 48px;
   padding: 0 16px;
-  border: 1px solid rgba(20, 52, 95, 0.18);
-  border-radius: 8px;
+  border: 1px solid rgba(34,197,94,0.2);
+  border-radius: 10px;
   outline: none;
-  color: var(--ink);
-  font: inherit;
-  background: rgba(255,255,255,0.78);
-  transition: border-color .2s, box-shadow .2s;
-}
-input:focus { border-color: rgba(27, 74, 155, 0.8); box-shadow: 0 0 0 3px rgba(27, 74, 155, 0.12); }
-.password-wrap { position: relative; }
-.password-wrap input { padding-right: 70px; }
-.show-password { position: absolute; top: 50%; right: 11px; transform: translateY(-50%); border: 0; background: none; color: #1d4ea7; font: inherit; font-weight: 800; cursor: pointer; }
-
-.error-message { min-height: 1.4em; margin: 12px 0 0; color: var(--danger); font-weight: 700; }
-.sign-in,
-.microsoft-login,
-.quick-card,
-.panic-button {
-  width: 100%;
-  height: 46px;
-  margin-top: 12px;
-  border: 0;
-  border-radius: 8px;
   font: inherit;
   font-size: 1rem;
+  color: var(--nxt-text);
+  background: rgba(0,0,0,0.45);
+  transition: border-color .2s, box-shadow .2s;
+  caret-color: var(--nxt-green);
+}
+.nxt-field input::placeholder { color: rgba(228,255,233,0.2); }
+.nxt-field input:focus {
+  border-color: var(--nxt-green);
+  box-shadow: 0 0 0 3px rgba(34,197,94,0.18);
+}
+
+.password-wrap { position: relative; }
+.password-wrap input { padding-right: 72px; }
+.show-password {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  border: 0;
+  background: none;
+  color: var(--nxt-green);
+  font: inherit;
+  font-size: .82rem;
   font-weight: 800;
   cursor: pointer;
+  letter-spacing: .04em;
+  text-transform: uppercase;
 }
-.sign-in {
-  background: linear-gradient(135deg, #1d6fe9, #1657b8);
+
+/* ── Error ───────────────────────────────────────────────────────────────── */
+.nxt-error {
+  min-height: 1.4em;
+  margin: 0 0 14px;
+  font-size: .87rem;
+  font-weight: 700;
+  color: var(--nxt-danger);
+  text-align: center;
+}
+
+/* ── Sign-in button ──────────────────────────────────────────────────────── */
+.nxt-sign-in {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--nxt-green) 0%, var(--nxt-green-dark) 100%);
+  color: #020403;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity .2s, transform .15s, box-shadow .2s;
+  box-shadow: 0 4px 20px var(--nxt-green-glow);
+  overflow: hidden;
+}
+.nxt-sign-in:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px var(--nxt-green-glow);
+}
+.nxt-sign-in:active:not(:disabled) { transform: translateY(0); }
+.nxt-sign-in:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Loading state */
+.nxt-sign-in .btn-spinner {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(2,4,3,0.3);
+  border-top-color: #020403;
+  border-radius: 50%;
+  animation: nxt-spin 0.7s linear infinite;
+  position: absolute;
+  top: 50%; left: 50%;
+  margin: -9px 0 0 -9px;
+}
+.nxt-sign-in.loading .btn-label  { opacity: 0; }
+.nxt-sign-in.loading .btn-spinner { display: block; }
+
+@keyframes nxt-spin { to { transform: rotate(360deg); } }
+
+/* ── Signup hint ─────────────────────────────────────────────────────────── */
+/* ── Mode toggle (sign in ↔ create account) ──────────────────────────────── */
+.nxt-mode-toggle {
+  margin: 20px 0 0;
+  text-align: center;
+  font-size: .82rem;
+  color: var(--nxt-muted);
+}
+.nxt-mode-toggle #mode-switch {
+  background: none;
+  border: none;
+  color: var(--nxt-green);
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0 0 0 5px;
+  transition: opacity .15s;
+}
+.nxt-mode-toggle #mode-switch:hover { opacity: 0.75; }
+
+/* ── Panic button ────────────────────────────────────────────────────────── */
+.nxt-panic {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 100;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border: 2px solid rgba(255,255,255,0.85);
+  border-radius: 50%;
+  background: #dc2626;
   color: #fff;
-  box-shadow: 0 8px 16px rgba(20, 82, 186, .18);
-}
-.microsoft-login {
-  background: rgba(255,255,255,0.6);
-  border: 1px solid rgba(29, 62, 112, 0.18);
-  color: #1d2433;
-}
-.quick-card {
-  background: rgba(255,255,255,0.5);
-  border: 1px solid rgba(29, 62, 112, 0.15);
-  color: #1d2433;
-}
-.panic-button {
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.5);
-  color: #000;
-  letter-spacing: .08em;
+  font: inherit;
+  font-size: 0.52rem;
+  font-weight: 900;
+  letter-spacing: .1em;
   text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 6px 22px rgba(220,38,38,0.45);
+  transition: transform .1s, box-shadow .1s;
 }
-.divider {
-  display: flex;
-  align-items: center;
-  margin: 22px 0 12px;
-  color: #6d7d96;
-  font-size: .76rem;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-}
-.divider::before,
-.divider::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid #dfe8f3;
-}
-.divider span {
-  padding: 0 12px;
-}
-.login-footer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 20px;
-  color: #4d5f80;
-  font-size: .76rem;
-}
-.login-footer a {
-  color: #4d5f80;
-  text-decoration: none;
-}
-.login-footer a:hover { text-decoration: underline; }
+.nxt-panic:hover  { transform: scale(1.07); box-shadow: 0 8px 28px rgba(220,38,38,0.55); }
+.nxt-panic:active { transform: scale(0.96); }
 
 
 .dashboard {

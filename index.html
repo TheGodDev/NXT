@@ -1,119 +1,116 @@
-```html
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LCPS GO | Sign in</title>
+    <title>NXT | Sign In</title>
+    <meta name="description" content="Sign in to the NXT portal." />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
     <link
-      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900&display=swap"
       rel="stylesheet"
     />
 
     <link rel="stylesheet" href="styles.css" />
   </head>
 
-  <body class="login-page">
-    <div class="login-shell">
-      <div class="brand-mark" aria-label="LCPS GO">LCPS GO</div>
+  <body class="nxt-login-page">
 
-      <main class="login-card" aria-labelledby="login-title">
-        <h1 id="login-title">Login to LCPS GO</h1>
+    <!-- Animated background canvas -->
+    <canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+    <div class="nxt-login-shell">
+
+      <!-- Logo / wordmark -->
+      <div class="nxt-wordmark" aria-label="NXT">
+        <span class="nxt-wordmark-n">N</span><span class="nxt-wordmark-x">X</span><span class="nxt-wordmark-t">T</span>
+      </div>
+      <p class="nxt-tagline">Your portal. Your access.</p>
+
+      <!-- Card -->
+      <main class="nxt-card" aria-labelledby="login-heading">
+        <h1 id="login-heading">Sign In</h1>
 
         <form id="login-form" novalidate>
-          <label for="username">Username</label>
-
-          <input
-            id="username"
-            name="username"
-            type="text"
-            autocomplete="username"
-            placeholder="Enter your username"
-            required
-          />
-
-          <label for="password">Password</label>
-
-          <div class="password-wrap">
+          <div class="nxt-field">
+            <label for="email">Email</label>
             <input
-              id="password"
-              name="password"
-              type="password"
-              autocomplete="current-password"
-              placeholder="Enter your password"
+              id="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="you@example.com"
               required
+              spellcheck="false"
             />
+          </div>
 
-            <button
-              class="show-password"
-              id="show-password"
-              type="button"
-              aria-label="Show password"
-            >
-              Show
-            </button>
+          <div class="nxt-field">
+            <label for="password">Password</label>
+            <div class="password-wrap">
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                placeholder="••••••••"
+                required
+              />
+              <button
+                class="show-password"
+                id="show-password"
+                type="button"
+                aria-label="Show password"
+              >Show</button>
+            </div>
           </div>
 
           <p
             id="error-message"
-            class="error-message"
+            class="nxt-error"
             role="alert"
             aria-live="polite"
           ></p>
 
-          <button class="sign-in" type="submit">
-            Sign In
+          <button class="nxt-sign-in" id="sign-in-btn" type="submit">
+            <span class="btn-label">Sign In</span>
+            <span class="btn-spinner" aria-hidden="true"></span>
           </button>
 
-          <button class="microsoft-login" type="button">
-            Microsoft Login
-          </button>
+          <!-- confirm password shown only in create-account mode -->
+          <div class="nxt-field" id="confirm-field" style="display:none;margin-top:18px;">
+            <label for="confirm-password">Confirm Password</label>
+            <div class="password-wrap">
+              <input
+                id="confirm-password"
+                name="confirm-password"
+                type="password"
+                autocomplete="new-password"
+                placeholder="••••••••"
+              />
+            </div>
+          </div>
         </form>
 
-        <div class="divider">
-          <span>Or sign in using:</span>
-        </div>
-
-        <button
-          class="quick-card"
-          type="button"
-          aria-label="Quick card sign in"
-        >
-          Quick Card
-        </button>
+        <p class="nxt-mode-toggle">
+          <span id="mode-hint">New here?</span>
+          <button type="button" id="mode-switch">Create an account</button>
+        </p>
       </main>
 
-      <footer class="login-footer">
-        <a href="/" class="return-home">Not Your Page?</a>
-        <a href="/" class="return-home">Help</a>
-        <a href="/" class="return-home">Browser Check</a>
-
-        <!-- Opens your own proxy/app -->
-        <a href="/proxy/" id="privacy-link">Privacy</a>
-      </footer>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Panic button — opens google.com as a cover -->
+    <button
+      class="nxt-panic"
+      id="panic-btn"
+      type="button"
+      aria-label="Emergency exit"
+    >PANIC</button>
 
-    <script>
-      /*
-       * Keep normal portal links going back to the start page.
-       * The Privacy link is intentionally excluded because
-       * it should open your /proxy/ page.
-       */
-      document.querySelectorAll("a").forEach((link) => {
-        if (link.id !== "privacy-link") {
-          link.addEventListener("click", (event) => {
-            event.preventDefault();
-            window.location.href = "/";
-          });
-        }
-      });
-    </script>
+    <!-- Firebase via CDN (ESM) -->
+    <script type="module" src="script.js"></script>
   </body>
 </html>
-```
