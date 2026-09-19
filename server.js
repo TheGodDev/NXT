@@ -40,9 +40,20 @@ const server = http.createServer((req, res) => {
 
   fs.stat(filePath, (err, stats) => {
     if (err || !stats.isFile()) {
-      if (pathname === '/scramjet/' || pathname === '/scramjet') {
+      if (
+        pathname === '/proxy/' ||
+        pathname === '/proxy' ||
+        pathname === '/scramjet/' ||
+        pathname === '/scramjet'
+      ) {
         const proxyIndex = path.join(rootDir, 'scramjet', 'public', 'index.html');
         serveFile(proxyIndex, res);
+        return;
+      }
+
+      if (pathname === '/sw.js') {
+        const swPath = path.join(rootDir, 'scramjet', 'public', 'sw.js');
+        serveFile(swPath, res);
         return;
       }
 
@@ -72,5 +83,8 @@ function serveFile(filePath, res) {
 
 server.listen(port, '0.0.0.0', () => {
   console.log(`LCPS GO portal running on http://localhost:${port}`);
-  console.log(`Scramjet proxy route available at http://localhost:${port}/scramjet/`);
+  console.warn(
+    'Warning: use "npm start" for full Scramjet support (/scram, Wisp, BareMux). Static-only mode is limited.'
+  );
+  console.log(`Proxy UI (limited): http://localhost:${port}/proxy/`);
 });

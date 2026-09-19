@@ -1,5 +1,7 @@
 "use strict";
-const stockSW = "./sw.js";
+/** Root-scoped SW so /scramjet/ proxied traffic is intercepted (UI lives under /proxy/). */
+const stockSW = "/sw.js";
+const stockSWScope = "/";
 
 /**
  * List of hostnames that are allowed to run serviceworkers on http://
@@ -21,5 +23,12 @@ async function registerSW() {
 		throw new Error("Your browser doesn't support service workers.");
 	}
 
-	await navigator.serviceWorker.register(stockSW);
+	const registrations = await navigator.serviceWorker.getRegistrations();
+	for (const registration of registrations) {
+		if (registration.scope.includes("/scramjet/")) {
+			await registration.unregister();
+		}
+	}
+
+	await navigator.serviceWorker.register(stockSW, { scope: stockSWScope });
 }

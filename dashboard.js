@@ -16,7 +16,7 @@ if (launchProxyButton) {
   launchProxyButton.addEventListener("click", () => {
     // Keep the proxy as a same-origin application so its service worker,
     // Wisp endpoint, and static assets use the same host as the portal.
-    window.location.assign("scramjet/");
+    window.location.assign("/proxy/");
   });
 }
 
