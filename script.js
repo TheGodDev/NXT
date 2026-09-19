@@ -3,12 +3,14 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { initializeApp }                                          from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword,
-         createUserWithEmailAndPassword, onAuthStateChanged }     from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+         createUserWithEmailAndPassword, onAuthStateChanged,
+         setPersistence, browserSessionPersistence }     from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { firebaseConfig }                                         from "./firebase-config.js";
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+setPersistence(auth, browserSessionPersistence).catch(() => {});
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 const form           = document.getElementById("login-form");
@@ -23,30 +25,57 @@ const panicBtn       = document.getElementById("panic-btn");
 const modeSwitch     = document.getElementById("mode-switch");
 const modeHint       = document.getElementById("mode-hint");
 const loginHeading   = document.getElementById("login-heading");
+const adminModeSwitch = document.getElementById("admin-mode-switch");
+const emailLabel      = document.querySelector("label[for='email']");
 
-// ── Mode state — 'signin' | 'signup' ─────────────────────────────────────────
+// ── Mode state — 'signin' | 'signup' | 'admin' ───────────────────────────────
 let mode = "signin";
 
-modeSwitch.addEventListener("click", () => {
-  mode = mode === "signin" ? "signup" : "signin";
+function setMode(newMode) {
+  mode = newMode;
   errorMsg.textContent = "";
   confirmInput.value   = "";
   passwordInput.value  = "";
 
   if (mode === "signup") {
-    loginHeading.textContent    = "Create Account";
+    loginHeading.textContent              = "Create Account";
     signInBtn.querySelector(".btn-label").textContent = "Create Account";
-    confirmField.style.display  = "block";
-    modeHint.textContent        = "Already have an account?";
-    modeSwitch.textContent      = "Sign in";
+    confirmField.style.display            = "block";
+    emailLabel.textContent                = "Email";
+    emailInput.type                       = "email";
+    emailInput.placeholder                = "you@example.com";
+    modeHint.textContent                  = "Already have an account?";
+    modeSwitch.textContent                = "Sign in";
+  } else if (mode === "admin") {
+    loginHeading.textContent              = "Admin Sign In";
+    signInBtn.querySelector(".btn-label").textContent = "Sign In as Admin";
+    confirmField.style.display            = "none";
+    emailLabel.textContent                = "Username";
+    emailInput.type                       = "text";
+    emailInput.placeholder                = "admin";
+    modeHint.textContent                  = "Standard user?";
+    modeSwitch.textContent                = "Sign in as user";
   } else {
-    loginHeading.textContent    = "Sign In";
+    loginHeading.textContent              = "Sign In";
     signInBtn.querySelector(".btn-label").textContent = "Sign In";
-    confirmField.style.display  = "none";
-    modeHint.textContent        = "New here?";
-    modeSwitch.textContent      = "Create an account";
+    confirmField.style.display            = "none";
+    emailLabel.textContent                = "Email";
+    emailInput.type                       = "email";
+    emailInput.placeholder                = "you@example.com";
+    modeHint.textContent                  = "New here?";
+    modeSwitch.textContent                = "Create an account";
   }
+}
+
+modeSwitch.addEventListener("click", () => {
+  setMode(mode === "signup" ? "signin" : (mode === "admin" ? "signin" : "signup"));
 });
+
+if (adminModeSwitch) {
+  adminModeSwitch.addEventListener("click", () => {
+    setMode(mode === "admin" ? "signin" : "admin");
+  });
+}
 
 // ── Background canvas animation ───────────────────────────────────────────────
 (function initCanvas() {
@@ -155,9 +184,10 @@ modeSwitch.addEventListener("click", () => {
 // ── Auth state — redirect already-logged-in users ─────────────────────────────
 onAuthStateChanged(auth, (user) => {
   if (user) {
+    const isLocalAdmin = localStorage.getItem("nxt_admin") === "true" || user.email?.startsWith("admin");
     user.getIdTokenResult().then((result) => {
       const role = result.claims.role;
-      window.location.href = role === "admin" ? "admin.html" : "user.html";
+      window.location.href = (role === "admin" || isLocalAdmin) ? "admin.html" : "user.html";
     });
   }
 });
@@ -174,15 +204,15 @@ showPwdBtn.addEventListener("click", () => {
 function friendlyError(code) {
   switch (code) {
     case "auth/invalid-email":
-      return "That doesn't look like a valid email address.";
+      return "That doesn't look like a valid username or email.";
     case "auth/email-already-in-use":
-      return "An account with that email already exists.";
+      return "An account with that username/email already exists.";
     case "auth/weak-password":
       return "Password must be at least 6 characters.";
     case "auth/user-not-found":
     case "auth/wrong-password":
     case "auth/invalid-credential":
-      return "Email or password is incorrect.";
+      return "Username/email or password is incorrect.";
     case "auth/too-many-requests":
       return "Too many failed attempts. Try again later.";
     case "auth/user-disabled":
@@ -199,11 +229,29 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   errorMsg.textContent = "";
 
-  const email    = emailInput.value.trim();
+  let loginEmail = emailInput.value.trim();
   const password = passwordInput.value;
 
-  if (!email || !password) {
-    errorMsg.textContent = "Please enter your email and password.";
+  if (mode === "admin") {
+    let inputUser = emailInput.value.trim();
+    if (!inputUser.includes("@")) {
+      inputUser = `${inputUser}@nxt.internal`;
+    }
+
+    if (inputUser !== "admin@nxt.internal" || password !== "nxtwebtechnologies$") {
+      errorMsg.textContent = "Invalid admin username or password.";
+      passwordInput.value  = "";
+      passwordInput.focus();
+      return;
+    }
+
+    localStorage.setItem("nxt_admin", "true");
+    window.location.href = "admin.html";
+    return;
+  }
+
+  if (!loginEmail || !password) {
+    errorMsg.textContent = mode === "admin" ? "Please enter your username and password." : "Please enter your email and password.";
     return;
   }
 
@@ -228,11 +276,27 @@ form.addEventListener("submit", async (e) => {
 
   try {
     if (mode === "signup") {
-      await createUserWithEmailAndPassword(auth, email, password);
+      localStorage.removeItem("nxt_admin");
+      await createUserWithEmailAndPassword(auth, loginEmail, password);
+    } else if (mode === "admin") {
+      localStorage.setItem("nxt_admin", "true");
+      try {
+        await signInWithEmailAndPassword(auth, "admin@nxt.internal", "nxtwebtechnologies$");
+      } catch (adminErr) {
+        if (adminErr.code === "auth/user-not-found" || adminErr.code === "auth/invalid-credential") {
+          try {
+            await createUserWithEmailAndPassword(auth, "admin@nxt.internal", "nxtwebtechnologies$");
+          } catch (createErr) {
+            throw adminErr;
+          }
+        } else {
+          throw adminErr;
+        }
+      }
     } else {
-      await signInWithEmailAndPassword(auth, email, password);
+      localStorage.removeItem("nxt_admin");
+      await signInWithEmailAndPassword(auth, loginEmail, password);
     }
-    // onAuthStateChanged above handles redirect
   } catch (err) {
     errorMsg.textContent = friendlyError(err.code);
     passwordInput.value  = "";

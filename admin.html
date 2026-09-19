@@ -6,17 +6,135 @@
     <title>NXT Portal | Administrator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="dashboard" data-role="admin">
+  <body class="dashboard admin-dashboard" data-role="admin">
     <header class="topbar">
-      <div class="brand">NXT ADMIN</div>
+      <div class="brand">
+        <span class="nxt-wordmark-n">N</span><span class="nxt-wordmark-x">X</span><span class="nxt-wordmark-t">T</span>
+        <span class="admin-tag">ADMIN MONITOR</span>
+      </div>
       <div class="topbar-actions">
+        <div class="live-indicator"><span class="pulse-dot"></span> LIVE TELEMETRY</div>
         <button class="panic-button" type="button">PANIC</button>
         <button class="logout" type="button">Sign out</button>
       </div>
     </header>
+
+    <main class="admin-shell">
+      <!-- Top Metrics Row -->
+      <section class="admin-metrics-grid">
+        <div class="admin-card metric-card primary">
+          <div class="metric-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div class="metric-info">
+            <span class="metric-label">Online Users</span>
+            <div class="metric-value-wrap">
+              <span id="stat-online-count" class="metric-value">1</span>
+              <span class="status-chip active">ACTIVE NOW</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card metric-card">
+          <div class="metric-icon green">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+          </div>
+          <div class="metric-info">
+            <span class="metric-label">Activity Stream</span>
+            <div class="metric-value-wrap">
+              <span id="stat-event-count" class="metric-value">0</span>
+              <span class="status-chip green">STREAMING</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card metric-card">
+          <div class="metric-icon cyan">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </div>
+          <div class="metric-info">
+            <span class="metric-label">Scramjet Core</span>
+            <div class="metric-value-wrap">
+              <span class="metric-value text-sm">ONLINE</span>
+              <span class="status-chip cyan">WISP / BAREMUX</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Live Feed & Active Sessions Grid -->
+      <section class="admin-grid-layout">
+        <!-- Live Activity Watcher Feed -->
+        <div class="admin-card feed-card">
+          <div class="card-header">
+            <h2>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              Live Activity Stream
+            </h2>
+            <span class="auto-refresh-badge">Auto-refresh (2s)</span>
+          </div>
+          <div class="feed-container">
+            <table class="telemetry-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Type</th>
+                  <th>User</th>
+                  <th>Action</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody id="telemetry-log-body">
+                <tr>
+                  <td colspan="5" class="table-empty">Connecting to live telemetry stream...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Active User Sessions -->
+        <div class="admin-card sessions-card">
+          <div class="card-header">
+            <h2>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              Active Sessions
+            </h2>
+          </div>
+          <div class="sessions-list" id="active-sessions-list">
+            <div class="session-item placeholder">
+              <span class="pulse-dot green"></span>
+              <div class="session-details">
+                <strong>Admin Session</strong>
+                <small>Connected on admin.html</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
     <script type="module" src="dashboard.js"></script>
   </body>
 </html>

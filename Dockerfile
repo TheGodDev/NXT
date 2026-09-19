@@ -17,4 +17,4 @@ RUN $NPM_BUILD
 COPY . .
 
 ENTRYPOINT [ "node" ]
-CMD ["src/index.js"]
+CMD ["scramjet/src/index.js"]
