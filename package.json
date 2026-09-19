@@ -1,17 +1,17 @@
 {
-  "name": "nxt-root-deployment",
+  "name": "nxt",
   "version": "1.0.0",
   "private": true,
-  "description": "Root-level Node.js deployment for the LCPS GO portal and Scramjet proxy.",
+  "description": "NXT LCPS GO portal with Scramjet proxy",
   "engines": {
     "node": ">=18",
     "npm": ">=9"
   },
   "scripts": {
     "postinstall": "npm --prefix ./scramjet install",
-    "start": "node scramjet/src/index.js",
-    "dev": "node scramjet/src/index.js",
+    "start": "node server.js",
+    "dev": "node server.js",
     "install:app": "npm --prefix ./scramjet install",
-    "start:app": "node scramjet/src/index.js"
+    "start:app": "node server.js"
   }
 }
