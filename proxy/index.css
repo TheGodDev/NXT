@@ -109,6 +109,15 @@ body {
 	letter-spacing: 2px;
 }
 
+.search-tagline {
+	margin: 0;
+	width: 100%;
+	text-align: center;
+	font-size: 0.95rem;
+	color: var(--text-secondary);
+	line-height: 1.5;
+}
+
 .description {
 	font-size: 1.1rem;
 	color: var(--text-secondary);

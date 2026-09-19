@@ -196,8 +196,7 @@ class BrowserUI {
 		this.show();
 
 		try {
-			// Register service worker if needed
-			await registerSW();
+			await ensureProxyReady();
 
 			// Setup Scramjet frame
 			const frame = scramjet.createFrame();
