@@ -13,7 +13,7 @@
     "dev": "node src/index.js"
   },
   "dependencies": {
-    "@mercuryworkshop/wisp-js": "^0.1.3",
+    "@mercuryworkshop/wisp-js": "latest",
     "firebase": "^12.19.0"
   }
 }
