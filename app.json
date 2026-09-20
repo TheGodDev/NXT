@@ -2,6 +2,6 @@
 	"name": "NXT Portal",
 	"description": "NXT Portal with Scramjet Proxy",
 	"repository": "https://github.com/TheGodDev/NXT",
-	"logo": "https://raw.githubusercontent.com/MercuryWorkshop/scramjet/main/assets/scramjet.png",
+	"logo": "https://raw.githubusercontent.com/TheDaBrain/scram/main/assets/sj.png",
 	"keywords": ["NXT", "Scramjet", "Proxy"]
 }
