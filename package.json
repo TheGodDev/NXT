@@ -13,6 +13,11 @@
     "dev": "node server.js"
   },
   "dependencies": {
+    "@fastify/static": "^7.0.4",
+    "@mercuryworkshop/libcurl-transport": "latest",
+    "@mercuryworkshop/scramjet": "latest",
+    "@mercuryworkshop/wisp-js": "latest",
+    "fastify": "^4.28.1",
     "firebase": "^12.19.0"
   }
 }
