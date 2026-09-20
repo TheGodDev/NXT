@@ -4,15 +4,12 @@
   "private": true,
   "description": "NXT LCPS GO portal with Scramjet proxy",
   "engines": {
-    "node": ">=18",
+    "node": ">=20",
     "npm": ">=9"
   },
   "scripts": {
-    "postinstall": "npm --prefix ./scramjet install",
-    "start": "node scramjet/src/index.js",
-    "dev": "node scramjet/src/index.js",
-    "install:app": "npm --prefix ./scramjet install",
-    "start:app": "node scramjet/src/index.js"
+    "start": "node src/index.js",
+    "dev": "node src/index.js"
   },
   "dependencies": {
     "firebase": "^12.19.0"
