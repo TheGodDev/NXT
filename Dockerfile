@@ -22,7 +22,6 @@ COPY src ./src
 COPY server.js ./server.js
 COPY config.js ./config.js
 COPY firebase-config.js ./firebase-config.js
-├── auth.js ./auth.js (if applicable)
 COPY script.js ./script.js
 COPY telemetry.js ./telemetry.js
 COPY dashboard.js ./dashboard.js
