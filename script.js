@@ -6,11 +6,12 @@ import { getAuth, signInWithEmailAndPassword,
          createUserWithEmailAndPassword, onAuthStateChanged,
          setPersistence, browserSessionPersistence }     from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { firebaseConfig }                                         from "./firebase-config.js";
+import "./panic.js";
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-setPersistence(auth, browserSessionPersistence).catch(() => {});
+setPersistence(auth, browserSessionPersistence).catch((error) => console.error("Unable to set session auth", error));
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 const form           = document.getElementById("login-form");

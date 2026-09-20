@@ -6,6 +6,7 @@ import { getAuth, onAuthStateChanged, signOut,
          setPersistence, browserSessionPersistence }
                                  from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { firebaseConfig }        from "./firebase-config.js";
+import "./panic.js";
 
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -13,6 +14,7 @@ setPersistence(auth, browserSessionPersistence).catch(() => {});
 
 const currentRole       = document.body.dataset.role;
 const launchProxyButton = document.querySelector("#launch-proxy");
+const launchOSButton    = document.querySelector("#launch-os");
 const logoutBtn         = document.querySelector(".logout");
 const panicButton       = document.querySelector(".panic-button");
 
@@ -51,6 +53,12 @@ if (launchProxyButton) {
     // Keep the proxy as a same-origin application so its service worker,
     // Wisp endpoint, and static assets use the same host as the portal.
     window.location.assign("/proxy/");
+  });
+}
+
+if (launchOSButton) {
+  launchOSButton.addEventListener("click", () => {
+    window.location.assign("/os.html");
   });
 }
 
