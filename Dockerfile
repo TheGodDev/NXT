@@ -18,7 +18,7 @@ RUN apk add --upgrade --no-cache python3 make g++
 
 # 3. Copy your folders and main HTML file before the installation
 COPY src ./src
-COPY public ./public
+COPY proxy ./proxy
 COPY index.html ./index.html
 
 # 4. Run the install (the postinstall script can now find the src directory)
