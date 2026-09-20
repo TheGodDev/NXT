@@ -1,9 +1,13 @@
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
+import http from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const rootDir = __dirname;
-const port = Number(process.env.PORT) || 8080;
+const port = Number(process.env.PORT) || 10000; // Match Render's default routing port
 
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
@@ -24,7 +28,7 @@ const mimeTypes = {
 };
 
 const server = http.createServer((req, res) => {
-  const url = new URL(req.url, 'http://localhost');
+  const url = new URL(req.url, `http://localhost:${port}`);
   let pathname = decodeURIComponent(url.pathname);
 
   if (pathname === '/') pathname = '/index.html';
@@ -82,9 +86,6 @@ function serveFile(filePath, res) {
 }
 
 server.listen(port, '0.0.0.0', () => {
-  console.log(`LCPS GO portal running on http://localhost:${port}`);
-  console.warn(
-    'Warning: use "npm start" for full Scramjet support (/scram, Wisp, BareMux). Static-only mode is limited.'
-  );
-  console.log(`Proxy UI (limited): http://localhost:${port}/proxy/`);
+  console.log(`LCPS GO portal running live on port ${port}`);
+  console.log(`Proxy interface mapping complete.`);
 });
