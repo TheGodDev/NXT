@@ -13,6 +13,7 @@
     "dev": "node src/index.js"
   },
   "dependencies": {
+    "@fastify/static": "^7.0.4",
     "@mercuryworkshop/wisp-js": "latest",
     "fastify": "^4.28.1",
     "firebase": "^12.19.0"
