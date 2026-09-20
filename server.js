@@ -23,6 +23,16 @@ const chatMessages = [
   }
 ];
 
+const activeSessions = new Map();
+const activityLogs = [{
+  id: 'sys-0',
+  type: 'SYSTEM',
+  user: 'NXT Core',
+  action: 'Telemetry Engine Online',
+  detail: 'Monitoring active connections and proxy traffic',
+  timestamp: new Date().toLocaleTimeString()
+}];
+
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
@@ -201,6 +211,50 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (pathname === '/api/telemetry/heartbeat' && req.method === 'POST') {
+    readJsonBody(req, (body) => {
+      const sessionId = String(body.sessionId || req.socket.remoteAddress || 'local');
+      activeSessions.set(sessionId, {
+        sessionId,
+        user: String(body.user || 'Anonymous User'),
+        page: String(body.page || 'portal'),
+        lastSeen: Date.now(),
+        ip: req.socket.remoteAddress || '127.0.0.1'
+      });
+      sendJson(res, { success: true });
+    });
+    return;
+  }
+
+  if (pathname === '/api/telemetry/event' && req.method === 'POST') {
+    readJsonBody(req, (body) => {
+      activityLogs.unshift({
+        id: Math.random().toString(36).slice(2, 9),
+        type: String(body.type || 'ACTIVITY'),
+        user: String(body.user || 'User'),
+        action: String(body.action || 'Action'),
+        detail: String(body.detail || ''),
+        timestamp: new Date().toLocaleTimeString()
+      });
+      if (activityLogs.length > 100) activityLogs.pop();
+      sendJson(res, { success: true });
+    });
+    return;
+  }
+
+  if (pathname === '/api/telemetry/stats' && req.method === 'GET') {
+    const now = Date.now();
+    for (const [id, session] of activeSessions.entries()) {
+      if (now - session.lastSeen > 12000) activeSessions.delete(id);
+    }
+    sendJson(res, {
+      onlineCount: activeSessions.size,
+      sessions: Array.from(activeSessions.values()),
+      recentLogs: activityLogs.slice(0, 30)
+    });
+    return;
+  }
+
   if (pathname === '/api/terminal/exec' && req.method === 'POST') {
     runTerminalCommand(req, res);
     return;
@@ -256,6 +310,21 @@ const server = http.createServer((req, res) => {
     serveFile(filePath, res);
   });
 });
+
+function readJsonBody(req, callback) {
+  let rawBody = '';
+  req.on('data', (chunk) => {
+    rawBody += chunk;
+    if (rawBody.length > 12000) req.destroy();
+  });
+  req.on('end', () => {
+    try {
+      callback(rawBody ? JSON.parse(rawBody) : {});
+    } catch (error) {
+      callback({});
+    }
+  });
+}
 
 server.on('upgrade', (req, socket, head) => {
   const pathname = new URL(req.url, 'http://localhost').pathname;

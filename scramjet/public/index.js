@@ -1,53 +1,5 @@
 "use strict";
 
-import { bindSignOutButtons, requireSignedIn, signOutOnPageExit } from "../auth.js";
-
-bindSignOutButtons(".proxy-logout");
-requireSignedIn();
-signOutOnPageExit();
-
-function initNxtBackground() {
-	const canvas = document.getElementById("nxt-bg-canvas");
-	if (!canvas) return;
-	const context = canvas.getContext("2d");
-	const particles = Array.from({ length: 55 }, () => ({
-		x: Math.random() * window.innerWidth,
-		y: Math.random() * window.innerHeight,
-		radius: 1 + Math.random() * 2.2,
-		dx: (Math.random() - 0.5) * 0.38,
-		dy: (Math.random() - 0.5) * 0.38,
-		alpha: 0.18 + Math.random() * 0.45
-	}));
-
-	function resize() {
-		canvas.width = window.innerWidth;
-		canvas.height = window.innerHeight;
-	}
-
-	function render() {
-		context.clearRect(0, 0, canvas.width, canvas.height);
-		particles.forEach((particle) => {
-			particle.x += particle.dx;
-			particle.y += particle.dy;
-			if (particle.x < 0) particle.x = canvas.width;
-			if (particle.x > canvas.width) particle.x = 0;
-			if (particle.y < 0) particle.y = canvas.height;
-			if (particle.y > canvas.height) particle.y = 0;
-			context.beginPath();
-			context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-			context.fillStyle = `hsla(130, 80%, 55%, ${particle.alpha})`;
-			context.fill();
-		});
-		requestAnimationFrame(render);
-	}
-
-	resize();
-	window.addEventListener("resize", resize);
-	render();
-}
-
-initNxtBackground();
-
 /**
  * @type {HTMLFormElement}
  */

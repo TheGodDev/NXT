@@ -74,50 +74,48 @@ const activityLogs = [
 	}
 ];
 
-// ── Live Global Chat Room Storage ───────────────────────────────────────────
-const chatMessages = [
-	{
-		id: "c-0",
-		user: "NXT System",
-		message: "Welcome to NXT OS Global Chat. Pick a username and start chatting.",
-		timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-		isSystem: true
+fastify.post("/api/telemetry/heartbeat", async (request, reply) => {
+	const body = request.body || {};
+	const sessionId = body.sessionId || request.ip;
+	if (sessionId) {
+		activeSessions.set(sessionId, {
+			sessionId,
+			user: body.user || "Anonymous User",
+			page: body.page || "portal",
+			lastSeen: Date.now(),
+			ip: request.ip || "127.0.0.1"
+		});
 	}
-];
-
-fastify.get("/api/chat/messages", async (_request, reply) => {
-	return reply.send({ messages: chatMessages.slice(-60) });
+	return reply.send({ success: true });
 });
 
-fastify.post("/api/chat/send", async (request, reply) => {
+fastify.post("/api/telemetry/event", async (request, reply) => {
 	const body = request.body || {};
-	const user = (body.user || "Anonymous").trim().substring(0, 24);
-	const message = (body.message || "").trim().substring(0, 350);
-
-	if (!user || !message) {
-		return reply.code(400).send({ error: "Username and message required" });
-	}
-
-	const newMsg = {
-		id: "c-" + Math.random().toString(36).substring(2, 9),
-		user,
-		message,
-		timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+	const logEntry = {
+		id: Math.random().toString(36).substring(2, 9),
+		type: body.type || "SEARCH",
+		user: body.user || "User",
+		action: body.action || "Proxy Search",
+		detail: body.detail || "",
+		timestamp: new Date().toLocaleTimeString()
 	};
+	activityLogs.unshift(logEntry);
+	if (activityLogs.length > 100) activityLogs.pop();
+	return reply.send({ success: true, logEntry });
+});
 
-	chatMessages.push(newMsg);
-	if (chatMessages.length > 150) chatMessages.shift();
-
-	activityLogs.unshift({
-		id: newMsg.id,
-		type: "CHAT",
-		user: newMsg.user,
-		action: "NXT Chat",
-		detail: newMsg.message,
-		timestamp: newMsg.timestamp
+fastify.get("/api/telemetry/stats", async (_request, reply) => {
+	const now = Date.now();
+	for (const [id, session] of activeSessions.entries()) {
+		if (now - session.lastSeen > 12000) {
+			activeSessions.delete(id);
+		}
+	}
+	return reply.send({
+		onlineCount: activeSessions.size,
+		sessions: Array.from(activeSessions.values()),
+		recentLogs: activityLogs.slice(0, 30)
 	});
-
-	return reply.send({ success: true, message: newMsg });
 });
 
 fastify.get("/sw.js", async (_request, reply) => {

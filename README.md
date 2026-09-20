@@ -21,7 +21,7 @@ NXT Proxy is currently undergoing active beta testing.
 
 
 ## 🤝 Contributing
-If you would like to help test or contribute to the development of NXT Proxy, feel free to fork the repository and submit a pull request. Please coordinate with either **TheGodDev** or **TheDaBrain** for major architectural changes.
+If you would like to help test or contribute to the development of NXT WEB, feel free to fork the repository and submit a pull request. Please coordinate with either **TheGodDev** or **TheDaBrain** for major architectural changes.
 
 ## 📄 License
 MIT

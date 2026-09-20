@@ -1,14 +1,18 @@
 <!doctype html>
-<html class="auth-pending">
+<html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<meta
 			name="viewport"
 			content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
 		/>
-		<title>NXT Proxy</title>
+		<title>NXT | Proxy</title>
 
-		<link rel="shortcut icon" content="favicon.webp" />
+		<link rel="shortcut icon" content="favicon.ico" />
+
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
 	
 		<script src="/scram/scramjet.all.js"></script>
 		<script src="/baremux/index.js"></script>
@@ -18,19 +22,22 @@
 		<script src="register-sw.js" defer></script>
 		<script src="search.js" defer></script>
 		<script src="browser-ui.js" defer></script>
-		<script type="module" src="index.js"></script>
-		<script type="module" src="../panic.js"></script>
+		<script src="index.js" defer></script>
 	</head>
 
 	<body>
-		<canvas id="nxt-bg-canvas" aria-hidden="true"></canvas>
-		<button class="nxt-panic proxy-panic" type="button" aria-label="Emergency exit">PANIC</button>
+		<!-- Animated background canvas -->
+		<canvas id="bg-canvas" aria-hidden="true"></canvas>
+
 		<!-- Browser UI Container -->
 		<div id="browser-container" class="browser-hidden">
 			<div class="browser-header">
 				<div class="browser-controls">
 					<button id="btn-home" class="browser-btn" title="Return to NXT Portal">
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+							<polyline points="9 22 9 12 15 12 15 22"></polyline>
+						</svg>
 					</button>
 					<button id="btn-back" class="browser-btn" title="Back">
 						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -61,7 +68,6 @@
 						<polyline points="6 9 12 15 18 9"></polyline>
 					</svg>
 				</button>
-				<button id="proxy-logout-browser" class="proxy-logout" type="button" title="Sign out">Sign out</button>
 			</div>
 			<div id="sj-frame-container" class="frame-container">
 				<!-- Frame will be inserted here -->
@@ -74,44 +80,59 @@
 			<div class="gradient-bg"></div>
 			
 			<div class="landing-content">
-				<button id="proxy-logout-landing" class="proxy-logout landing-logout" type="button" title="Sign out">Sign out</button>
 				<!-- Left side: Logo and description -->
 				<div class="landing-left">
 					<div class="logo-container">
-						<h1 class="title">NXT</h1>
+						<div class="nxt-wordmark" aria-label="NXT">
+							<span class="nxt-wordmark-n">N</span><span class="nxt-wordmark-x">X</span><span class="nxt-wordmark-t">T</span>
+						</div>
+						<div class="nxt-proxy-badge">PROXY</div>
+						<p class="nxt-tagline">Your portal. Your access.</p>
 					</div>
 				</div>
 
 				<!-- Right side: Search form and enter button -->
 				<div class="landing-right">
-					<form id="sj-form" class="search-form">
-						<input
-							id="sj-search-engine"
-							value="https://duckduckgo.com/?q=%s"
-							type="hidden"
-						/>
-						<div class="search-container">
-							<input 
-								id="sj-address" 
-								type="text" 
-								class="search-input" 
-								placeholder="Search the web freely..."
-								spellcheck="false"
+					<div class="nxt-card">
+						<form id="sj-form" class="search-form">
+							<input
+								id="sj-search-engine"
+								value="https://duckduckgo.com/?q=%s"
+								type="hidden"
 							/>
-							<button type="submit" class="search-enter-btn" title="Search">
-								<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-									<polyline points="6 9 12 15 18 9"></polyline>
-								</svg>
-							</button>
-						</div>
-					</form>
-					<p class="search-tagline">
-						Search the web freely, powered by NXT Proxy
-					</p>
-					<div id="sj-error" class="error-message"></div>
-					<pre id="sj-error-code" class="error-code"></pre>
+							<div class="search-container">
+								<input 
+									id="sj-address" 
+									type="text" 
+									class="search-input" 
+									placeholder="Search the web freely..."
+									spellcheck="false"
+								/>
+								<button type="submit" class="search-enter-btn" title="Search">
+									<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+										<line x1="5" y1="12" x2="19" y2="12"></line>
+										<polyline points="12 5 19 12 12 19"></polyline>
+									</svg>
+								</button>
+							</div>
+						</form>
+						<p class="search-tagline">
+							Search the web freely, powered by ScramJet & NXT
+						</p>
+						<div id="sj-error" class="error-message"></div>
+						<pre id="sj-error-code" class="error-code"></pre>
+					</div>
 				</div>
 			</div>
 		</div>
+
+		<!-- Panic button — opens google.com as a cover -->
+		<button
+			class="nxt-panic"
+			id="panic-btn"
+			type="button"
+			aria-label="Emergency exit"
+		>PANIC</button>
 	</body>
 </html>
+

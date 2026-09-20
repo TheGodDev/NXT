@@ -1,7 +1,7 @@
 {
-	"name": "BrainLink ",
-	"description": "BrainLink App",
+	"name": "NXT Portal",
+	"description": "NXT Portal with Scramjet Proxy",
 	"repository": "https://github.com/TheGodDev/NXT",
 	"logo": "https://raw.githubusercontent.com/MercuryWorkshop/scramjet/main/assets/scramjet.png",
-	"keywords": ["BrainLink"]
+	"keywords": ["NXT", "Scramjet", "Proxy"]
 }
