@@ -2,6 +2,7 @@
   "name": "nxt",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "NXT LCPS GO portal with Scramjet proxy",
   "engines": {
     "node": ">=20",
@@ -15,3 +16,4 @@
     "firebase": "^12.19.0"
   }
 }
+
