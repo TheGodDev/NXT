@@ -1,12 +1,12 @@
 <!doctype html>
-<html>
+<html class="auth-pending">
 	<head>
 		<meta charset="utf-8" />
 		<meta
 			name="viewport"
 			content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
 		/>
-		<title>BrainLink</title>
+		<title>NXT Proxy</title>
 
 		<link rel="shortcut icon" content="favicon.webp" />
 	
@@ -18,10 +18,13 @@
 		<script src="register-sw.js" defer></script>
 		<script src="search.js" defer></script>
 		<script src="browser-ui.js" defer></script>
-		<script src="index.js" defer></script>
+		<script type="module" src="index.js"></script>
+		<script type="module" src="../panic.js"></script>
 	</head>
 
 	<body>
+		<canvas id="nxt-bg-canvas" aria-hidden="true"></canvas>
+		<button class="nxt-panic proxy-panic" type="button" aria-label="Emergency exit">PANIC</button>
 		<!-- Browser UI Container -->
 		<div id="browser-container" class="browser-hidden">
 			<div class="browser-header">
@@ -55,6 +58,7 @@
 						<polyline points="6 9 12 15 18 9"></polyline>
 					</svg>
 				</button>
+				<button id="proxy-logout-browser" class="proxy-logout" type="button" title="Sign out">Sign out</button>
 			</div>
 			<div id="sj-frame-container" class="frame-container">
 				<!-- Frame will be inserted here -->
@@ -67,11 +71,11 @@
 			<div class="gradient-bg"></div>
 			
 			<div class="landing-content">
+				<button id="proxy-logout-landing" class="proxy-logout landing-logout" type="button" title="Sign out">Sign out</button>
 				<!-- Left side: Logo and description -->
 				<div class="landing-left">
 					<div class="logo-container">
-						<img class="logo" src="sj.png" alt="Scramjet" />
-						<h1 class="title">BrainLink</h1>
+						<h1 class="title">NXT</h1>
 					</div>
 				</div>
 
@@ -99,7 +103,7 @@
 						</div>
 					</form>
 					<p class="search-tagline">
-						Search the web freely, powered by ScramJet and NXTWEB
+						Search the web freely, powered by NXT Proxy
 					</p>
 					<div id="sj-error" class="error-message"></div>
 					<pre id="sj-error-code" class="error-code"></pre>

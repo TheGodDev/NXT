@@ -61,6 +61,65 @@ fastify.register(fastifyStatic, {
 	decorateReply: false,
 });
 
+// ── In-Memory Telemetry Engine for Admin Live Monitor ───────────────────────
+const activeSessions = new Map();
+const activityLogs = [
+	{
+		id: "sys-0",
+		type: "SYSTEM",
+		user: "NXT Core",
+		action: "Telemetry Engine Online",
+		detail: "Monitoring active connections & proxy traffic",
+		timestamp: new Date().toLocaleTimeString()
+	}
+];
+
+// ── Live Global Chat Room Storage ───────────────────────────────────────────
+const chatMessages = [
+	{
+		id: "c-0",
+		user: "NXT System",
+		message: "Welcome to NXT OS Global Chat. Pick a username and start chatting.",
+		timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+		isSystem: true
+	}
+];
+
+fastify.get("/api/chat/messages", async (_request, reply) => {
+	return reply.send({ messages: chatMessages.slice(-60) });
+});
+
+fastify.post("/api/chat/send", async (request, reply) => {
+	const body = request.body || {};
+	const user = (body.user || "Anonymous").trim().substring(0, 24);
+	const message = (body.message || "").trim().substring(0, 350);
+
+	if (!user || !message) {
+		return reply.code(400).send({ error: "Username and message required" });
+	}
+
+	const newMsg = {
+		id: "c-" + Math.random().toString(36).substring(2, 9),
+		user,
+		message,
+		timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+	};
+
+	chatMessages.push(newMsg);
+	if (chatMessages.length > 150) chatMessages.shift();
+
+	activityLogs.unshift({
+		id: newMsg.id,
+		type: "CHAT",
+		user: newMsg.user,
+		action: "NXT Chat",
+		detail: newMsg.message,
+		timestamp: newMsg.timestamp
+	});
+
+	return reply.send({ success: true, message: newMsg });
+});
+
 fastify.get("/sw.js", async (_request, reply) => {
 	return reply.sendFile("sw.js", scramjetPublicPath);
 });

@@ -3,12 +3,15 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { initializeApp }                                          from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword,
-         createUserWithEmailAndPassword, onAuthStateChanged }     from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+         createUserWithEmailAndPassword, onAuthStateChanged,
+         setPersistence, browserSessionPersistence }             from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { firebaseConfig }                                         from "./firebase-config.js";
+import "./panic.js";
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+setPersistence(auth, browserSessionPersistence).catch((error) => console.error("Unable to set session auth", error));
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 const form           = document.getElementById("login-form");
@@ -19,7 +22,6 @@ const confirmInput   = document.getElementById("confirm-password");
 const showPwdBtn     = document.getElementById("show-password");
 const errorMsg       = document.getElementById("error-message");
 const signInBtn      = document.getElementById("sign-in-btn");
-const panicBtn       = document.getElementById("panic-btn");
 const modeSwitch     = document.getElementById("mode-switch");
 const modeHint       = document.getElementById("mode-hint");
 const loginHeading   = document.getElementById("login-heading");
@@ -244,7 +246,3 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-// ── Panic → Google ────────────────────────────────────────────────────────────
-panicBtn.addEventListener("click", () => {
-  window.location.href = "https://www.google.com";
-});
