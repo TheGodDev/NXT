@@ -96,6 +96,21 @@ fastify.get("/scramjet/", async (request, reply) => {
   return reply.redirect("/proxy/");
 });
 
+// --- SERVE SERVICE WORKER FILES FROM PROXY ROUTED AT THE ROOT ---
+fastify.get("/sw.js", async (request, reply) => {
+  return reply
+    .type("application/javascript")
+    .sendFile("sw.js", proxyPath);
+});
+
+// Adding this just in case your setup uses a secondary worker bundle file
+fastify.get("/sw.worker.js", async (request, reply) => {
+  return reply
+    .type("application/javascript")
+    .sendFile("sw.worker.js", proxyPath);
+});
+// ----------------------------------------------------------------
+
 fastify.setNotFoundHandler((request, reply) => {
   return reply.code(404).type("text/html").send("Not found");
 });
