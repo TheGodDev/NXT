@@ -9,18 +9,19 @@ function isLegacyShellNavigation(request) {
 	return pathname === "/scramjet" || pathname === "/scramjet/";
 }
 
-async function handleRequest(event) {
-	if (isLegacyShellNavigation(event.request)) {
-		return Response.redirect(new URL("/proxy/", event.request.url), 302);
-	}
-
-	await scramjet.loadConfig();
-	if (scramjet.route(event)) {
-		return scramjet.fetch(event);
-	}
-	return fetch(event.request);
-}
-
 self.addEventListener("fetch", (event) => {
-	event.respondWith(handleRequest(event));
+	event.respondWith((async () => {
+		// Handle legacy navigation overrides
+		if (isLegacyShellNavigation(event.request)) {
+			return Response.redirect(new URL("/proxy/", event.request.url), 302);
+		}
+
+		// Load configurations and intercept traffic
+		await scramjet.loadConfig();
+		if (scramjet.route(event)) {
+			return scramjet.fetch(event);
+		}
+		
+		return fetch(event.request);
+	})());
 });
