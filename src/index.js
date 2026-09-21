@@ -1,6 +1,7 @@
 import { createServer } from "node:http";
-import { fileURLToPath } from "url";
+import { fileURLToPath } from "node:url";
 import { hostname } from "node:os";
+
 import { server as wisp, logging } from "@mercuryworkshop/wisp-js/server";
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
@@ -9,27 +10,32 @@ import { scramjetPath } from "@mercuryworkshop/scramjet/path";
 import { libcurlPath } from "@mercuryworkshop/libcurl-transport";
 import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 
-const rootPath = fileURLToPath(new URL("../", import.meta.url));
-const proxyPath = fileURLToPath(new URL("../proxy/", import.meta.url));
+const rootPath = fileURLToPath(new URL("../../", import.meta.url));
+const proxyPath = fileURLToPath(new URL("../../proxy/", import.meta.url));
 
 logging.set_level(logging.NONE);
 
 Object.assign(wisp.options, {
   allow_udp_streams: false,
-  hostname_blacklist: [/example\.com/],
   dns_servers: ["1.1.1.3", "1.0.0.3"],
 });
 
 const fastify = Fastify({
+  logger: true,
+
   serverFactory: (handler) => {
     return createServer()
       .on("request", (req, res) => {
         res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
         res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+
         handler(req, res);
       })
+
       .on("upgrade", (req, socket, head) => {
-        if (req.url?.endsWith("/wisp/")) {
+        const path = req.url?.split("?")[0] ?? "";
+
+        if (path === "/wisp/" || path.endsWith("/wisp/")) {
           wisp.routeRequest(req, socket, head);
         } else {
           socket.end();
@@ -38,88 +44,101 @@ const fastify = Fastify({
   },
 });
 
-// LCPS GO files
-fastify.register(fastifyStatic, {
-  root: rootPath,
-  decorateReply: true,
-  index: false,
-});
-
-// Proxy UI
-fastify.register(fastifyStatic, {
-  root: proxyPath,
-  prefix: "/proxy/",
-  decorateReply: false,
-});
-
-// Scramjet runtime
+/*
+ * Scramjet files
+ */
 fastify.register(fastifyStatic, {
   root: scramjetPath,
   prefix: "/scram/",
   decorateReply: false,
 });
 
-// Libcurl
+/*
+ * Libcurl transport
+ */
 fastify.register(fastifyStatic, {
   root: libcurlPath,
   prefix: "/libcurl/",
   decorateReply: false,
 });
 
-// Baremux
+/*
+ * BareMux
+ */
 fastify.register(fastifyStatic, {
   root: baremuxPath,
   prefix: "/baremux/",
   decorateReply: false,
 });
 
-// LCPS GO homepage
-fastify.get("/", async (request, reply) => {
-  return reply.sendFile("index.html", rootPath);
+/*
+ * NXT proxy UI
+ *
+ * Files live in:
+ *
+ * /proxy/index.html
+ * /proxy/index.js
+ * /proxy/sw.js
+ */
+fastify.register(fastifyStatic, {
+  root: proxyPath,
+  prefix: "/proxy/",
+  decorateReply: false,
 });
 
-// Proxy homepage
-fastify.get("/proxy", async (request, reply) => {
+/*
+ * Service worker MUST be at:
+ *
+ * https://your-domain.com/sw.js
+ */
+fastify.get("/sw.js", async (_request, reply) => {
+  return reply
+    .type("application/javascript")
+    .sendFile("sw.js", proxyPath);
+});
+
+/*
+ * /proxy → /proxy/
+ */
+fastify.get("/proxy", async (_request, reply) => {
   return reply.redirect("/proxy/");
 });
 
-fastify.get("/proxy/", async (request, reply) => {
-  return reply.sendFile("index.html", proxyPath);
-});
-
-// Old URL still works
-fastify.get("/scramjet", async (request, reply) => {
+/*
+ * Legacy Scramjet routes
+ */
+fastify.get("/scramjet", async (_request, reply) => {
   return reply.redirect("/proxy/");
 });
 
-fastify.get("/scramjet/", async (request, reply) => {
+fastify.get("/scramjet/", async (_request, reply) => {
   return reply.redirect("/proxy/");
 });
 
-fastify.setNotFoundHandler((request, reply) => {
-  return reply.code(404).type("text/html").send("Not found");
+/*
+ * Main NXT website
+ */
+fastify.register(fastifyStatic, {
+  root: rootPath,
+  decorateReply: true,
 });
 
-fastify.server.on("listening", () => {
-  const address = fastify.server.address();
-
-  console.log("NXT listening on:");
-  console.log(`http://localhost:${address.port}`);
-  console.log(`Proxy: http://localhost:${address.port}/proxy/`);
+/*
+ * 404
+ */
+fastify.setNotFoundHandler(async (_request, reply) => {
+  return reply
+    .code(404)
+    .type("text/plain")
+    .send("NXT: Page not found");
 });
 
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
+/*
+ * Start server
+ */
+let port = Number(process.env.PORT);
 
-function shutdown() {
-  console.log("Closing server...");
-  fastify.close();
-  process.exit(0);
-}
-
-let port = parseInt(process.env.PORT || "", 10);
-
-if (isNaN(port)) {
+if (!port) {
   port = 8080;
 }
 
@@ -127,3 +146,26 @@ fastify.listen({
   port,
   host: "0.0.0.0",
 });
+
+fastify.server.on("listening", () => {
+  const address = fastify.server.address();
+
+  console.log("NXT Browser server started");
+
+  if (typeof address === "object" && address) {
+    console.log(`Port: ${address.port}`);
+  }
+
+  console.log(`Proxy: /proxy/`);
+  console.log(`Service Worker: /sw.js`);
+  console.log(`Wisp: /wisp/`);
+});
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
+
+async function shutdown() {
+  console.log("Shutting down...");
+  await fastify.close();
+  process.exit(0);
+}
