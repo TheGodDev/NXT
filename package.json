@@ -2,6 +2,7 @@
   "name": "nxt",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "NXT LCPS GO portal with Scramjet proxy",
   "engines": {
     "node": ">=18",
@@ -9,6 +10,7 @@
   },
   "scripts": {
     "postinstall": "npm --prefix ./scramjet install",
+    "build": "mkdir -p scramjet/proxy && cp scramjet/node_modules/@mercuryworkshop/scramjet/dist/sw.js ./scramjet/proxy/sw.js || true",
     "start": "node scramjet/src/index.js",
     "dev": "node scramjet/src/index.js",
     "install:app": "npm --prefix ./scramjet install",
