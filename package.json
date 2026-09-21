@@ -9,8 +9,8 @@
     "npm": ">=9"
   },
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "cd scramjet && npm start",
+    "dev": "cd scramjet && npm start"
   },
   "dependencies": {
     "@fastify/static": "^7.0.4",
