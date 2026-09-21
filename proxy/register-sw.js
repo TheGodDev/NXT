@@ -1,34 +1,61 @@
-"use strict";
-/** Root-scoped SW so /scramjet/ proxied traffic is intercepted (UI lives under /proxy/). */
-const stockSW = "/sw.js";
-const stockSWScope = "/";
-
 /**
- * List of hostnames that are allowed to run serviceworkers on http://
+ * NXT Browser Proxy - Panic Button/Emergency Tab Masker
+ * Instantly masks the active tab to an innocent webpage.
  */
-const swAllowedHostnames = ["localhost", "127.0.0.1"];
 
-/**
- * Global util
- * Used in 404.html and index.html
- */
-async function registerSW() {
-	if (!navigator.serviceWorker) {
-		if (
-			location.protocol !== "https:" &&
-			!swAllowedHostnames.includes(location.hostname)
-		)
-			throw new Error("Service workers cannot be registered without https.");
+// Configuration: Customize your safe fallback destination
+const PANIC_CONFIG = {
+  safeUrl: "https://www.google.com",
+  safeTitle: "Google",
+  safeFavicon: "https://google.com",
+  hotkey: "Escape" // Pressing 'Escape' will instantly trigger the panic mask
+};
 
-		throw new Error("Your browser doesn't support service workers.");
-	}
+function triggerEmergencyMask() {
+  console.log("NXT Panic Triggered: Masking browser session...");
 
-	const registrations = await navigator.serviceWorker.getRegistrations();
-	for (const registration of registrations) {
-		if (registration.scope.includes("/scramjet/")) {
-			await registration.unregister();
-		}
-	}
+  // 1. Immediately replace the favicon to look like a safe page
+  let favicon = document.querySelector("link[rel*='icon']");
+  if (!favicon) {
+    favicon = document.createElement("link");
+    favicon.rel = "shortcut icon";
+    document.head.appendChild(favicon);
+  }
+  favicon.href = PANIC_CONFIG.safeFavicon;
 
-	await navigator.serviceWorker.register(stockSW, { scope: stockSWScope });
+  // 2. Change the tab title immediately
+  document.title = PANIC_CONFIG.safeTitle;
+
+  // 3. Clear out the active proxy DOM to prevent background visibility
+  if (document.body) {
+    document.body.innerHTML = `
+      <div style="font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #fff;">
+        <p style="color: #666; font-size: 14px;">Loading workspace...</p>
+      </div>
+    `;
+  }
+
+  // 4. Force override the active history line and redirect the window location
+  window.location.replace(PANIC_CONFIG.safeUrl);
 }
+
+// Initialize Panic Listeners when DOM content is interactive
+document.addEventListener("DOMContentLoaded", () => {
+  // Bind to the explicit Panic buttons present in index.html
+  const panicButtons = document.querySelectorAll(".nxt-panic, .proxy-panic");
+  
+  panicButtons.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      triggerEmergencyMask();
+    });
+  });
+
+  // Bind to global window keydown event for seamless hotkey masking
+  window.addEventListener("keydown", (e) => {
+    if (e.key === PANIC_CONFIG.hotkey) {
+      e.preventDefault();
+      triggerEmergencyMask();
+    }
+  });
+});
