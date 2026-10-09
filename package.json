@@ -1,23 +1,20 @@
 {
-  "name": "nxt-scramjet",
+  "name": "nxt",
   "version": "1.0.0",
   "private": true,
-  "description": "Scramjet proxy server with Mercury Workshop packages",
-  "type": "module",
+  "description": "NXT LCPS GO portal with Scramjet proxy",
   "engines": {
     "node": ">=18",
     "npm": ">=9"
   },
   "scripts": {
-    "start": "node src/index.js"
+    "postinstall": "npm --prefix ./scramjet install",
+    "start": "node scramjet/src/index.js",
+    "dev": "node scramjet/src/index.js",
+    "install:app": "npm --prefix ./scramjet install",
+    "start:app": "node scramjet/src/index.js"
   },
   "dependencies": {
-    "@mercuryworkshop/bare-mux": "2.1.9",
-    "@mercuryworkshop/libcurl-transport": "1.5.2",
-    "@mercuryworkshop/scramjet": "1.1.0",
-    "@mercuryworkshop/wisp-js": "0.4.1",
-    "@fastify/static": "^9.3.0",
-    "fastify": "^5.12.5",
     "firebase": "^12.19.0"
   }
 }
